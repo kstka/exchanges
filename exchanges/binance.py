@@ -274,7 +274,7 @@ class Binance(Exchange):
         return result
 
     @staticmethod
-    def _parse_position_info(self, position_info):
+    def _parse_position_info(position_info):
         """
         {
             'symbol': 'YGGUSDT',
