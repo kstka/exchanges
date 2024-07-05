@@ -8,3 +8,4 @@ from exchanges.client import Client
 from exchanges.binance import Binance
 from exchanges.bybit import ByBit
 from exchanges.kucoin import KuCoin
+from exchanges.bitfinex import Bitfinex

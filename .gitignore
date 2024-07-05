@@ -127,3 +127,6 @@ dmypy.json
 # Various
 config.py
 test.py
+
+# notebook for tests
+notebook.ipynb

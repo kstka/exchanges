@@ -77,7 +77,7 @@ class ByBit(Exchange):
                                   proxies=self._PROXIES,
                                   timeout=self._REQUESTS_TIMEOUT)
 
-    def get_klines(self, symbol: str, interval: str, start: int = None, end: int = None, limit=200):
+    def get_candles(self, symbol: str, interval: str, start: int = None, end: int = None, limit=200):
         endpoint = '/v5/market/kline'
         params = {
             'category': self._CATEGORY,
@@ -89,6 +89,7 @@ class ByBit(Exchange):
             params['start'] = start
         if end:
             params['end'] = end
+
         return self._request(endpoint=endpoint, params=params)
 
     def get_server_time(self):

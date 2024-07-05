@@ -21,7 +21,7 @@ To get started with Exchanges, clone the repository and install the package usin
 ```
 git clone https://github.com/kstka/exchanges
 cd exchanges
-pip install .
+pip install -e .
 ```
 
 # Example usage

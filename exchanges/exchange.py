@@ -17,8 +17,9 @@ class Exchange:
 
     _API_URL = ''
 
-    INTERVALS = {'1m': '1m', '3m': '3m', '5m': '5m', '15m': '15m', '30m': '30m',
-                 '1h': '1h', '2h': '2h', '4h': '4h', '6h': '6h', '8h': '8h', '12h': '12h', '1d': '1d', '1w': '1w'}
+    # intervals should be set correctly for each exchange
+    INTERVALS = {'1m': '1m', '3m': '3m', '5m': '5m', '15m': '15m', '30m': '30m', '1h': '1h', '2h': '2h', '4h': '4h',
+                 '6h': '6h', '8h': '8h', '12h': '12h', '1d': '1d', '1w': '1w'}
 
     SIDE_BUY = 'BUY'
     SIDE_SELL = 'SELL'
@@ -128,6 +129,9 @@ class Exchange:
         """
         return int(time.time() * 1000)
 
+    def _get_uri(self, endpoint, method, signed):
+        return self._API_URL + endpoint
+
     def _request(self, endpoint: str, method=None, signed=False, **kwargs):
 
         if signed and not self._API_KEY:
@@ -153,7 +157,7 @@ class Exchange:
 
         kwargs = self._handle_request_kwargs(kwargs, method, timestamp, endpoint, signed)
 
-        uri = self._API_URL + endpoint
+        uri = self._get_uri(endpoint, method, signed)
 
         response = getattr(self._session, method)(uri, **kwargs)
         return self._handle_response(response)
@@ -205,6 +209,10 @@ class Exchange:
     def update_headers(self, headers):
         self._session.headers.update(headers)
 
+    def get_symbol_assets(self, symbol):
+        base_asset, quote_asset = symbol.split(self._GLOBAL_SYMBOL_SEPARATOR)
+        return base_asset, quote_asset
+
     @staticmethod
     def get_precision(value):
         return -int(math.log10(float(value))) if value else 0
@@ -214,8 +222,24 @@ class Exchange:
         factor = 10 ** precision
         return math.trunc(value * factor) / factor
 
+    def interval_to_local(self, interval):
+        """
+        Converts interval to local format.
+        :param interval:
+        :return:
+        """
+        if not interval in self.INTERVALS:
+            raise ExchangeException(f"Unknown interval {interval}")
+        return self.INTERVALS[interval]
+
     @staticmethod
     def interval_to_minutes(interval):
+        """
+        Converts interval to minutes.
+        You have to convert interval to local format with interval_to_local before using this method.
+        :param interval:
+        :return:
+        """
         minutes_in_interval = {'1m': 1, '3m': 3, '5m': 5, '15m': 15, '30m': 30, '1h': 60, '2h': 60*2, '4h': 60*4,
                                '6h': 60*6, '8h': 60*8, '12h': 60*12, '1d': 60*24, '1w': 60*24*7}
         if interval in minutes_in_interval:
@@ -302,7 +326,29 @@ class Exchange:
     def create_order(self, symbol, side, quantity, price=None, stop_price=None, type='LIMIT', time_in_force=None):
         raise NotImplementedException
 
-    def get_klines(self, symbol, interval, from_timestamp=None, to_timestamp=None, limit=None):
+    def get_candles(self, symbol, interval, start=None, end=None, limit=None):
+        """
+        Retrieves candles for a symbol.
+        :param symbol:
+        :param interval:
+        :param start: timestamp in seconds
+        :param end: timestamp in seconds
+        :param limit:
+        :return:
+
+        candle format:
+        {
+            'date': datetime.date,
+            'date_time: datetime.datetime,
+            'timestamp': 1234567890,
+            'open': 10000,
+            'high': 10100,
+            'low': 9900,
+            'close': 10050,
+            'volume': 100,
+            'extra': 'extra data',  # optional
+        }
+        """
         raise NotImplementedException
 
     def get_position_info(self, symbol):
