@@ -4,8 +4,8 @@
 
 """
 
-from exchanges.client import Client
-from exchanges.binance import Binance
-from exchanges.bybit import ByBit
-from exchanges.kucoin import KuCoin
-from exchanges.bitfinex import Bitfinex
+from .client import Client
+from .binance import Binance
+from .bybit import ByBit
+from .kucoin import KuCoin
+from .bitfinex import Bitfinex

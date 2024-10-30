@@ -162,7 +162,7 @@ class Bitfinex(Exchange):
             'volume': candle[5],
         }
 
-    def get_candles(self, symbol: str, interval: str, start: int = None, end: int = None, limit: int = None):
+    def get_candles(self, symbol: str, interval: str, start: int=None, end: int=None, limit: int=None):
         # https://docs.bitfinex.com/reference/rest-public-candles
         local_symbol = self._convert_symbol_to_local(symbol)
         local_interval = self.interval_to_local(interval)

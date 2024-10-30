@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "exchanges"
+version = "0.1.1"
+dependencies = [
+  "requests",
+]
+authors = [{name = "Konstantin Kalachev", email = "me@kstka.com"}]
+description = "Cryptocurrency exchanges trading library for Python"
+readme = "README.md"
+license = {text = "MIT License"}
+keywords = ["cryptocurrency", "trading", "exchanges", "bitcoin", "binance", "bittrex", "kucoin", "bybit", "crypto",
+    "usdt", "btc", "algorithmic", "quantitative", "finance",]
+
+[project.urls]
+Homepage = "https://github.com/kstka/exchanges"
+Documentation = "https://github.com/kstka/exchanges"
+Repository = "https://github.com/kstka/exchanges"

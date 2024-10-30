@@ -1,4 +1,6 @@
 import datetime as dt
+
+from exchanges.exceptions import NotImplementedException
 from exchanges.exchange import Exchange
 from exchanges.exceptions import *
 
@@ -42,12 +44,12 @@ class Binance(Exchange):
         """
         symbol_in_global_format = ''
         if self._FUTURES:
-            for quote_asset in self._FUTURES_QUOTE_ASSETS:
+            for quote_asset in self._futures_quote_assets:
                 if symbol.endswith(quote_asset):
                     base_asset = symbol.replace(quote_asset, '')
                     symbol_in_global_format = base_asset + self._GLOBAL_SYMBOL_SEPARATOR + quote_asset
         else:
-            for quote_asset in self._SPOT_QUOTE_ASSETS:
+            for quote_asset in self._spot_quote_assets:
                 if symbol.endswith(quote_asset):
                     base_asset = symbol.replace(quote_asset, '')
                     symbol_in_global_format = base_asset + self._GLOBAL_SYMBOL_SEPARATOR + quote_asset
@@ -360,7 +362,7 @@ class Binance(Exchange):
         response = self._request(endpoint=endpoint, signed=True, method='delete', params=params)
         return self._parse_order(response)
 
-    def get_order(self, order_id=None, symbol=None):
+    def get_order(self, order_id=None, symbol=None, parse=True):
         if not symbol or not order_id:
             raise ExchangeException('symbol and order_id must be specified to get order')
 
@@ -375,4 +377,42 @@ class Binance(Exchange):
         }
 
         response = self._request(endpoint=endpoint, signed=True, params=params)
-        return self._parse_order(response)
+        if parse:
+            return self._parse_order(response)
+        else:
+            return response
+
+    def get_orders(self, symbol, parse=True):
+
+        if self._FUTURES:
+            raise NotImplementedException('get_orders is not implemented for futures')
+        else:
+            endpoint = '/api/v3/allOrders'
+
+        params = {
+            'symbol': self._convert_symbol_to_local(symbol),
+        }
+
+        response = self._request(endpoint=endpoint, signed=True, params=params)
+        if parse:
+            return self._parse_order(response)
+        else:
+            return response
+
+    def get_trades(self, symbol, order_id=None):
+        # https://binance-docs.github.io/apidocs/spot/en/#account-trade-list-user_data
+
+        if self._FUTURES:
+            raise NotImplementedException('get_trades is not implemented for futures')
+        else:
+            endpoint = '/api/v3/myTrades'
+
+        params = {
+            'symbol': self._convert_symbol_to_local(symbol),
+        }
+
+        if order_id:
+            params['orderId'] = order_id
+
+        response = self._request(endpoint=endpoint, signed=True, params=params)
+        return response
